@@ -1,7 +1,7 @@
-name=Template
-author=You, Inc.
-description=A basic game template.
-bundleID=com.yourcompany.TemplateGame
-version=1.0
-buildNumber=100
-imagePath=SystemAssets
+name=Grapple Game
+author=Brandon Taylor
+description=A small platforming game about a climbing up a mountain with a grappling hook
+bundleID=com.tosfgames.grapplegame
+version=0.1.1
+buildNumber=1
+imagePath=images
