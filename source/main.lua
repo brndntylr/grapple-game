@@ -4,7 +4,7 @@ import "CoreLibs/sprites"
 import "CoreLibs/timer"
 import "player"
 -- import "grapple"
--- import "platform"
+import "platform"
 -- import "grapple_surface"
 
 playdate.display.setRefreshRate(30)
