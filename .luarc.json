@@ -3,7 +3,8 @@
     "diagnostics.globals": ["import",
         "Player",
         "Platform",
-        "Grapple_Surface"],
+        "Grapple_Surface",
+        "Grapple"],
     "diagnostics.severity": {
         "duplicate-set-field": "Hint"
     },
