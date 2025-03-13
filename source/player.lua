@@ -11,8 +11,12 @@ function Player:init(x, y, speed, jumpspeed, gravity)
 	Player.super.init(self)
 
     self.speed = speed
-    self.yspeed = 0
+    self.jump_speed = jumpspeed
+    self.y_speed = 0
     self.gravity = gravity
+    self.max_speed = 10
+
+    self.jumped = false
 
 	-- Currently just a single image for the sprite but will add animation in the future
 	local player_image = gfx.image.new("images/dude-0001.png")
@@ -29,25 +33,28 @@ function Player:update()
 
     if pd.buttonIsPressed(pd.kButtonRight) then
         self:moveWithCollisions(self.x+self.speed, self.y)
-        -- print(pos_x+self.speed)
-        -- self:moveTo(pos_x+self.speed, 0)
     end
     if pd.buttonIsPressed(pd.kButtonLeft) then
         self:moveWithCollisions(self.x-self.speed, self.y)
-        -- print(pos_x-self.speed)
-        -- self.moveTo(pos_x-self.speed, 0)
     end
     if pd.buttonJustPressed(pd.kButtonA) then
-        self.yspeed = -
+        if self.jumped == false then
+            self.y_speed = -self.jump_speed
+            self.jumped = true
+        end
     end
 
-    self:moveWithCollisions(self.x,self.y+self.jumpspeed)
+    self:moveWithCollisions(self.x,self.y+self.y_speed)
 
-    self.yspeed += self.gravity
+    self.y_speed += self.gravity
+    if self.y_speed > 0 then
+        self.y_speed = math.min(self.y_speed, self.max_speed)
+    end
 end
 
 function Player:collisionResponse(other)
     if other.super.className == "Platform" then
+        self.jumped = false
         return "slide"
     end
 end
