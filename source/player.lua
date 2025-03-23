@@ -1,9 +1,10 @@
 import "CoreLibs/sprites"
+import "CoreLibs/graphics"
+import "grapple"
+import "arrow"
 
 local pd <const> = playdate
 local gfx <const> = pd.graphics
-
-local ground_y = 180
 
 class('Player').extends(gfx.sprite)
 
@@ -16,6 +17,8 @@ function Player:init(x, y, speed, jumpspeed, gravity)
     self.gravity = gravity
     self.max_speed = 10
 
+    self.aim_angle = 0
+
     self.jumped = false
 
 	-- Currently just a single image for the sprite but will add animation in the future
@@ -25,26 +28,54 @@ function Player:init(x, y, speed, jumpspeed, gravity)
     self:setCollidesWithGroups(1)
 	self:setZIndex(10)
     self:moveTo(x, y)
+
+    self.grapple = Grapple(self.x+self.width, self.y+(self.height/2))
+    -- self.grapple:add()
+
+    self.arrow = Arrow(self.x, self.y)
+    -- self.Arrow:add()
 end
 
 function Player:update()
 
     Player.super.update(self)
 
-    if pd.buttonIsPressed(pd.kButtonRight) then
-        self:moveWithCollisions(self.x+self.speed, self.y)
-    end
-    if pd.buttonIsPressed(pd.kButtonLeft) then
-        self:moveWithCollisions(self.x-self.speed, self.y)
-    end
-    if pd.buttonJustPressed(pd.kButtonA) then
-        if self.jumped == false then
-            self.y_speed = -self.jump_speed
-            self.jumped = true
+    if pd.buttonJustPressed(pd.kButtonB) then
+        if self.grapple.state == "None" then
+            self.arrow:reset()
+            self.arrow:add()
+            -- self.grapple:add()
+            self.grapple.state = "Out"
+        elseif self.grapple.state == "Out" then
+            self.arrow:remove()
+            self.grapple.state = "Launched"
+        elseif self.grapple.state == "Launched" then
+            -- self.grapple:remove()
+            self.grapple.state = "None"
         end
     end
 
+    if self.grapple.state == "None" then
+        if pd.buttonIsPressed(pd.kButtonLeft) then
+            self:moveWithCollisions(self.x-self.speed, self.y)
+        end
+        if pd.buttonIsPressed(pd.kButtonRight) then
+            self:moveWithCollisions(self.x+self.speed, self.y)
+        end
+        if pd.buttonJustPressed(pd.kButtonA) then
+            if self.jumped == false then
+                self.y_speed = -self.jump_speed
+                self.jumped = true
+            end
+        end
+    -- elseif self.grapple.state == "Out" then
+    --     local a = 1
+    elseif self.grapple.state == "Launched" then
+        self.grapple.state = "None"
+    end
+
     self:moveWithCollisions(self.x,self.y+self.y_speed)
+    self.arrow:moveTo(self.x, self.y-(self.height/2))
 
     self.y_speed += self.gravity
     if self.y_speed > 0 then
@@ -55,6 +86,7 @@ end
 function Player:collisionResponse(other)
     if other.super.className == "Platform" then
         self.jumped = false
+        self.y_Speed = 0.1;
         return "slide"
     end
 end

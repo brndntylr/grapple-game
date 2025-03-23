@@ -27,28 +27,7 @@ function Grapple:init(x,y)
 end
 
 function Grapple:update()
-
     Grapple.super.update(self)
-
-    -- if pd.buttonIsPressed(pd.kButtonRight) then
-    --     self:moveWithCollisions(self.x+self.speed, self.y)
-    -- end
-    -- if pd.buttonIsPressed(pd.kButtonLeft) then
-    --     self:moveWithCollisions(self.x-self.speed, self.y)
-    -- end
-    -- if pd.buttonJustPressed(pd.kButtonA) then
-    --     if self.jumped == false then
-    --         self.y_speed = -self.jump_speed
-    --         self.jumped = true
-    --     end
-    -- end
-
-    -- self:moveWithCollisions(self.x,self.y+self.y_speed)
-
-    -- self.y_speed += self.gravity
-    -- if self.y_speed > 0 then
-    --     self.y_speed = math.min(self.y_speed, self.max_speed)
-    -- end
 end
 
 function Grapple:collisionResponse(other)
