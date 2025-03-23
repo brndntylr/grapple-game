@@ -5,12 +5,11 @@ import "CoreLibs/timer"
 import "player"
 import "platform"
 import "grapple_surface"
--- import "grapple"
 
 playdate.display.setRefreshRate(30)
 
-local pd = playdate
-local gfx = pd.graphics
+local pd <const> = playdate
+local gfx <const> = pd.graphics
 
 local function initialise()
     local player_sprite = Player(200, 120, 2, 10, 1)
