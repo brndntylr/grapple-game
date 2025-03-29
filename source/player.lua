@@ -56,8 +56,16 @@ function Player:update()
             self.grapple.state = "none"
         end
     end
+    
+    if self.grapple.state == "stuck" then
+        if pd.isCrankDocked() then
+            CrankInd = 1
+        else
+            CrankInd = 0
+        end
+    end
 
-    if self.grapple.state == "None" then
+    if (self.grapple.state == "none" or self.grapple.state == "stuck") then
         if pd.buttonIsPressed(pd.kButtonLeft) then
             self:moveWithCollisions(self.x-self.speed, self.y)
         end

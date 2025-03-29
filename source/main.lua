@@ -2,6 +2,7 @@ import "CoreLibs/object"
 import "CoreLibs/graphics"
 import "CoreLibs/sprites"
 import "CoreLibs/timer"
+import "CoreLibs/ui"
 import "player"
 import "platform"
 import "grapple_surface"
@@ -10,6 +11,7 @@ playdate.display.setRefreshRate(30)
 
 local pd <const> = playdate
 local gfx <const> = pd.graphics
+CrankInd = 0
 
 local function initialise()
     local player_sprite = Player(200, 120, 2, 10, 1)
@@ -25,8 +27,15 @@ local function initialise()
     grapple_surface_001:add()
 end
 
+-- function crankStatus(val)
+--     crank_ind = val
+-- end
+
 initialise()
 
 function pd.update()
     gfx.sprite.update()
+    if CrankInd == 1 then
+        pd.ui.crankIndicator:draw()
+    end
 end
