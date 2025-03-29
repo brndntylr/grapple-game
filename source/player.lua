@@ -41,17 +41,19 @@ function Player:update()
     Player.super.update(self)
 
     if pd.buttonJustPressed(pd.kButtonB) then
-        if self.grapple.state == "None" then
+        if self.grapple.state == "none" then
             self.arrow:reset()
             self.arrow:add()
-            -- self.grapple:add()
-            self.grapple.state = "Out"
-        elseif self.grapple.state == "Out" then
+            self.grapple:moving(self.x,self.y,self.width,self.height)
+            self.grapple:add()
+            self.grapple.state = "out"
+        elseif self.grapple.state == "out" then
             self.arrow:remove()
-            self.grapple.state = "Launched"
-        elseif self.grapple.state == "Launched" then
-            -- self.grapple:remove()
-            self.grapple.state = "None"
+            self.aim_angle = self.arrow:posOut()
+            self.grapple:launch(self.aim_angle)
+        elseif (self.grapple.state == "launched" or self.grapple.state == "stuck") then
+            self.grapple:remove()
+            self.grapple.state = "none"
         end
     end
 
@@ -68,10 +70,10 @@ function Player:update()
                 self.jumped = true
             end
         end
-    -- elseif self.grapple.state == "Out" then
-    --     local a = 1
-    elseif self.grapple.state == "Launched" then
-        self.grapple.state = "None"
+    elseif self.grapple.state == "out" then
+        -- local a = 1
+    elseif self.grapple.state == "launched" then
+        -- self.grapple.state = "None"
     end
 
     self:moveWithCollisions(self.x,self.y+self.y_speed)
