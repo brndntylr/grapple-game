@@ -60,7 +60,16 @@ function Player:update()
     if self.grapple.state == "stuck" then
         if pd.isCrankDocked() then
             CrankInd = 1
-        else
+        -- else
+        --     CrankInd = 0
+        end
+    end
+
+    if CrankInd == 1 then
+        if self.grapple.state ~= "stuck" then
+            CrankInd = 0
+        end
+        if pd.isCrankDocked() == false then
             CrankInd = 0
         end
     end
