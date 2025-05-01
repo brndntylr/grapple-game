@@ -56,25 +56,11 @@ function Player:update()
             self.grapple.state = "none"
         end
     end
-    
-    if self.grapple.state == "stuck" then
-        if pd.isCrankDocked() then
-            CrankInd = 1
-        -- else
-        --     CrankInd = 0
-        end
-    end
 
-    if CrankInd == 1 then
-        if self.grapple.state ~= "stuck" then
-            CrankInd = 0
-        end
-        if pd.isCrankDocked() == false then
-            CrankInd = 0
-        end
-    end
+    self:CrankCheck()
 
-    if (self.grapple.state == "none" or self.grapple.state == "stuck") then
+    -- if (self.grapple.state == "none" or self.grapple.state == "stuck") then
+    if self.grapple.state == "none" then
         if pd.buttonIsPressed(pd.kButtonLeft) then
             self:moveWithCollisions(self.x-self.speed, self.y)
         end
@@ -87,9 +73,15 @@ function Player:update()
                 self.jumped = true
             end
         end
-    elseif self.grapple.state == "out" then
+    elseif self.grapple.state == "stuck" then 
+        if self:checkCollisions(self.x, self.y) then
+            pass
+        else
+            pass
+        end
+    -- elseif self.grapple.state == "out" then
         -- local a = 1
-    elseif self.grapple.state == "launched" then
+    -- elseif self.grapple.state == "launched" then
         -- self.grapple.state = "None"
     end
 
@@ -107,5 +99,22 @@ function Player:collisionResponse(other)
         self.jumped = false
         self.y_Speed = 0.1;
         return "slide"
+    end
+end
+
+function Player:CrankCheck()
+    if self.grapple.state == "stuck" then
+        if pd.isCrankDocked() then
+            CrankInd = 1
+        end
+    end
+
+    if CrankInd == 1 then
+        if self.grapple.state ~= "stuck" then
+            CrankInd = 0
+        end
+        if pd.isCrankDocked() == false then
+            CrankInd = 0
+        end
     end
 end

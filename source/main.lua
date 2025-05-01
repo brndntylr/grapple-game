@@ -27,10 +27,6 @@ local function initialise()
     grapple_surface_001:add()
 end
 
--- function crankStatus(val)
---     crank_ind = val
--- end
-
 initialise()
 
 function pd.update()
