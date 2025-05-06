@@ -11,17 +11,32 @@ class('Player').extends(gfx.sprite)
 function Player:init(x, y, speed, jumpspeed, gravity)
 	Player.super.init(self)
 
-    self.speed = speed
-    self.jump_speed = jumpspeed
-    self.y_speed = 0
-    self.gravity = gravity
-    self.max_speed = 10
+    -- Movement on the ground
+    self.vx = 0
+    self.vy = 0
 
+    self.ax = 0.2
+    self.friction = 0.1 
+    self.onGround = false
+    self.max_vx = speed
+
+    -- Movement whilst jumping
+    self.jump_speed = jumpspeed
+    self.gravity = gravity
+    self.max_vy_fall = 10
+
+    -- Movement whilst grappling
+    self.grappleLength = 0
+
+    self.air_resistance = -1
+    self.max_omega = 12
+
+    self.ropeLength = 100
+
+    -- Other
     self.aim_angle = 0
 
-    self.jumped = false
-
-	-- Currently just a single image for the sprite but will add animation in the future
+	-- Define player sprite image (need to look at adding animation eventually)
 	local player_image = gfx.image.new("images/dude-0001.png")
     self:setImage(player_image)
 	self:setCollideRect(0, 0, self:getSize())
@@ -29,16 +44,25 @@ function Player:init(x, y, speed, jumpspeed, gravity)
 	self:setZIndex(10)
     self:moveTo(x, y)
 
+    -- Initialising grapple and arrow within the player sprite
     self.grapple = Grapple(self.x+self.width, self.y+(self.height/2))
-    -- self.grapple:add()
-
     self.arrow = Arrow(self.x, self.y)
-    -- self.Arrow:add()
 end
 
 function Player:update()
 
     Player.super.update(self)
+
+    self.vy += self.gravity
+
+    if playdate.buttonIsPressed(playdate.kButtonLeft) then
+        self.vx -= 3.3
+    elseif playdate.buttonIsPressed(playdate.kButtonRight) then
+        self.vx += 3.3
+    end
+
+    self.vy = math.min(self.vy, self.max_vy_fall)
+    self.vx = math.max(math.min(self.vx, self.max_vx), -self.max_vx)
 
     if pd.buttonJustPressed(pd.kButtonB) then
         if self.grapple.state == "none" then
@@ -57,56 +81,46 @@ function Player:update()
         end
     end
 
-    self:CrankCheck()
+    local targetX = self.x + self.vx
+    local targetY = self.y + self.vy
 
-    -- if (self.grapple.state == "none" or self.grapple.state == "stuck") then
-    if self.grapple.state == "none" then
-        if pd.buttonIsPressed(pd.kButtonLeft) then
-            self:moveWithCollisions(self.x-self.speed, self.y)
+    if self.isGrappling and self.grapplePoint then
+        local dx = targetX - self.grapple.x
+        local dy = targetY - self.grapple.y
+        local dist = math.sqrt(dx * dx + dy * dy)
+
+        if dist > self.ropeLength then
+            local scale = self.ropeLength / dist
+            targetX = self.grapplePoint.x + dx * scale
+            targetY = self.grapplePoint.y + dy * scale
+    
+            self.vx = targetX - self.x
+            self.vy = targetY - self.y
         end
-        if pd.buttonIsPressed(pd.kButtonRight) then
-            self:moveWithCollisions(self.x+self.speed, self.y)
-        end
-        if pd.buttonJustPressed(pd.kButtonA) then
-            if self.jumped == false then
-                self.y_speed = -self.jump_speed
-                self.jumped = true
-            end
-        end
-    elseif self.grapple.state == "stuck" then 
-        if self:checkCollisions(self.x, self.y) then
-            pass
-        else
-            pass
-        end
-    -- elseif self.grapple.state == "out" then
-        -- local a = 1
-    -- elseif self.grapple.state == "launched" then
-        -- self.grapple.state = "None"
     end
 
-    self:moveWithCollisions(self.x,self.y+self.y_speed)
-    self.arrow:moveTo(self.x, self.y-(self.height/2))
+    local actualX, actualY, collisions, count = self:moveWithCollisions(targetX, targetY)
 
-    self.y_speed += self.gravity
-    if self.y_speed > 0 then
-        self.y_speed = math.min(self.y_speed, self.max_speed)
+    if self.grapple.state = "out" then
+        self.arrow:moveTo(self.x, self.y-(self.height/2))
+    end
+
+    if self.grapple.state == "stuck" then
+        self:CrankCheck()
     end
 end
 
 function Player:collisionResponse(other)
     if other.super.className == "Platform" then
-        self.jumped = false
-        self.y_Speed = 0.1;
+        self.onGround = false
+        self.vy = 0.1;
         return "slide"
     end
 end
 
 function Player:CrankCheck()
-    if self.grapple.state == "stuck" then
-        if pd.isCrankDocked() then
-            CrankInd = 1
-        end
+    if pd.isCrankDocked() then
+        CrankInd = 1
     end
 
     if CrankInd == 1 then
