@@ -25,6 +25,9 @@ local function initialise()
 
     local grapple_surface_001 = Grapple_Surface(200, 10, 100, 6)
     grapple_surface_001:add()
+
+    local grapple_surface_002 = Grapple_Surface(200, 120, 100, 6)
+    grapple_surface_001:add()
 end
 
 initialise()

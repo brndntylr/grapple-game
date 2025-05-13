@@ -13,8 +13,13 @@ function Platform:init(x, y, width, height)
     self:setImage(platform_image)
     self:setScale(width/platform_width, height/platform_height)
 
+    self.type = "Platform"
+    self.friction = 0.5
+
 	self:setCollideRect(0, 0, width, height)
-    self:setGroups(1)
+    self:setGroups({1})
 	self:setZIndex(10)
     self:moveTo(x, y)
+    
+    self:add()
 end

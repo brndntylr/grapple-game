@@ -15,7 +15,9 @@ function Grapple_Surface:init(x, y, width, height)
     self:setImage(grapple_surface_image)
     
 	self:setCollideRect(0, 0, self:getSize())
-    self:setGroups(2)
+    self:setGroups({2})
 	self:setZIndex(10)
     self:moveTo(x,y)
+
+    self:add()
 end
