@@ -29,7 +29,7 @@ function Player:init(x, y, speed, jumpspeed, gravity)
     -- Movement whilst grappling
     self.grappleLength = 0
 
-    self.air_resistance = -1
+    self.air_resistance = 1
     self.max_omega = 12
 
     self.ropeLength = 100
@@ -64,6 +64,14 @@ function Player:update()
     print(self.vx)
 
     self.vy = math.min(self.vy, self.max_vy_fall)
+
+    if self.grapple.state == "stuck" and not pd.isCrankDocked() then
+        local crankChange = pd.getCrankChange()
+        if math.abs(crankChange) > 0 then
+            self.ropeLength = math.max(10, self.ropeLength - crankChange)
+        end
+    end
+
     -- self.vx = math.max(math.min(self.vx, self.max_vx), -self.max_vx)
     self.vx = math.clamp(self.vx, -self.max_vx, self.max_vx)
 
@@ -97,6 +105,20 @@ function Player:update()
         targetX = self.x
     end
     local targetY = self.y + self.vy
+
+    if self.grapple.state == "stuck" and self.grapple.x and self.grapple.y then
+        local dx = targetX - self.grapple.x
+        local dy = targetY - self.grapple.y
+        local dist = math.sqrt(dx * dx + dy * dy)
+
+        if dist > self.ropeLength then
+            local scale = self.ropeLength / dist
+            targetX = self.grapple.x + dx * scale
+            targetY = self.grapple.y + dy * scale
+            self.vx = targetX - self.x
+            self.vy = targetY - self.y
+        end
+    end
 
     local actualX, actualY, collisions, count = self:moveWithCollisions(targetX, targetY)
 
