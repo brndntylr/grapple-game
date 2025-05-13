@@ -2,7 +2,10 @@
     "$schema": "https://raw.githubusercontent.com/sumneko/vscode-lua/master/setting/schema.json",
     "diagnostics.globals": ["import",
         "Player",
-        "Platform"],
+        "Platform",
+        "Grapple_Surface",
+        "Grapple",
+        "Arrow"],
     "diagnostics.severity": {
         "duplicate-set-field": "Hint"
     },

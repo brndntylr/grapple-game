@@ -1,53 +1,222 @@
 import "CoreLibs/sprites"
+import "CoreLibs/graphics"
+import "grapple"
+import "arrow"
+import "utils"
 
 local pd <const> = playdate
 local gfx <const> = pd.graphics
-
-local ground_y = 180
 
 class('Player').extends(gfx.sprite)
 
 function Player:init(x, y, speed, jumpspeed, gravity)
 	Player.super.init(self)
 
-    self.speed = speed
-    self.yspeed = 0
-    self.gravity = gravity
+    -- Movement on the ground
+    self.vx = 0
+    self.vy = 0
 
-	-- Currently just a single image for the sprite but will add animation in the future
+    self.ax = 0.8
+    -- self.friction = 0.4
+    self.jumped = false
+    self.max_vx = 5
+
+    -- Movement whilst jumping
+    self.jump_speed = 15
+    self.gravity = 1.5
+    self.air_ax = 0.3
+    self.max_vy_fall = 10
+
+    -- Movement whilst grappling
+    self.grappleLength = 0
+    self.air_resistance = 0.5
+    self.theta = 0  -- angle of the rope
+    self.omega = 0  -- angular velocity
+    self.swinging = false
+    self.angular_acceleration = 0.01  -- Small value to adjust swing acceleration
+    self.max_omega = 0.1
+
+    self.ropeLength = 100
+
+    -- Other
+    self.aim_angle = 0
+
+	-- Define player sprite image (need to look at adding animation eventually)
 	local player_image = gfx.image.new("images/dude-0001.png")
     self:setImage(player_image)
 	self:setCollideRect(0, 0, self:getSize())
-    self:setCollidesWithGroups(1)
+    self:setCollidesWithGroups({1})
 	self:setZIndex(10)
     self:moveTo(x, y)
+
+    -- Initialising grapple and arrow within the player sprite
+    self.grapple = Grapple(self.x+self.width, self.y+(self.height/2))
+    self.arrow = Arrow(self.x, self.y)
+
+    self:add()
 end
 
 function Player:update()
-
     Player.super.update(self)
 
-    if pd.buttonIsPressed(pd.kButtonRight) then
-        self:moveWithCollisions(self.x+self.speed, self.y)
-        -- print(pos_x+self.speed)
-        -- self:moveTo(pos_x+self.speed, 0)
+    self.vy += self.gravity
+
+    self.grounded = false
+
+    local acc = self.ax
+    if self.jumped then
+        acc = self.air_ax
     end
-    if pd.buttonIsPressed(pd.kButtonLeft) then
-        self:moveWithCollisions(self.x-self.speed, self.y)
-        -- print(pos_x-self.speed)
-        -- self.moveTo(pos_x-self.speed, 0)
+
+    if playdate.buttonIsPressed(pd.kButtonLeft) then
+        self.vx -= acc
+    elseif playdate.buttonIsPressed(pd.kButtonRight) then
+        self.vx += acc
     end
+    print(self.vx)
+
+    self.vy = math.min(self.vy, self.max_vy_fall)
+
+    if self.grapple.state == "stuck" and not pd.isCrankDocked() then
+        local crankChange = pd.getCrankChange()
+        if math.abs(crankChange) > 0 then
+            self.ropeLength = math.max(10, self.ropeLength - crankChange)
+        end
+    end
+
+    -- self.vx = math.max(math.min(self.vx, self.max_vx), -self.max_vx)
+    self.vx = math.clamp(self.vx, -self.max_vx, self.max_vx)
+
     if pd.buttonJustPressed(pd.kButtonA) then
-        self.yspeed = -
+        if not self.jumped then
+            if self.swinging then
+                self.vx += math.cos(self.theta) * self.omega * self.ropeLength
+                self.vy += math.sin(self.theta) * self.omega * self.ropeLength
+                self.grapple.state = "none"
+            end
+            self.vy -= self.jump_speed
+            self.jumped = true
+        end
     end
 
-    self:moveWithCollisions(self.x,self.y+self.jumpspeed)
+    if pd.buttonJustPressed(pd.kButtonB) then
+        if self.grapple.state == "none" then
+            self.arrow:reset()
+            self.arrow:add()
+            self.grapple:moving(self.x,self.y,self.width,self.height)
+            self.grapple:add()
+            self.grapple.state = "out"
+        elseif self.grapple.state == "out" then
+            self.arrow:remove()
+            self.aim_angle = self.arrow:posOut()
+            self.grapple:launch(self.aim_angle)
+        elseif (self.grapple.state == "launched" or self.grapple.state == "stuck") then
+            self.vx += math.cos(self.theta) * self.omega * self.ropeLength
+            self.vy += math.sin(self.theta) * self.omega * self.ropeLength
+            self.grapple:remove()
+            self.grapple.state = "none"
+        end
+    end
 
-    self.yspeed += self.gravity
+    if self.grapple.state == "stuck" and not pd.isCrankDocked() then
+        local crankChange = pd.getCrankChange()
+        if crankChange ~= 0 then
+            self.ropeLength = math.max(10, self.ropeLength - crankChange)
+        end
+    end
+
+    local targetX = self.x + self.vx
+    if self.grapple.state == "out" then
+        targetX = self.x
+    end
+    local targetY = self.y + self.vy
+
+    -- local _, _, coll, _ = self:checkCollisions(self.x, self.y)
+    -- if self.grapple.state == "stuck" and self.grapple.x and self.grapple.y and self.grounded == false then
+    if self.grapple.state == "stuck" and self.grapple.x and self.grapple.y then
+        if not self.swinging then
+            -- Initialize swing from current position
+            local dx = self.x - self.grapple.x
+            local dy = self.y - self.grapple.y
+            self.theta = math.atan(dx, dy) -- angle from vertical
+            self.omega = 0
+            self.swinging = true
+        end
+
+        -- Apply angular acceleration to the angular velocity
+        local angular_force = (-self.gravity / self.ropeLength) * math.sin(self.theta) -- pendulum physics
+        
+        local angular_accel = angular_force
+        if pd.buttonIsPressed(pd.kButtonLeft) then 
+            angular_accel -= self.angular_acceleration  -- Apply custom angular acceleration
+        elseif pd.buttonIsPressed(pd.kButtonRight) then
+            angular_accel += self.angular_acceleration
+        end
+
+        -- Update angular velocity with the new angular acceleration
+        self.omega += angular_accel
+        self.omega *= 0.9  -- damping
+
+        -- Ensure the omega (angular velocity) doesn't exceed max limit
+        print(self.omega)
+        self.omega = math.clamp(self.omega, -self.max_omega, self.max_omega)
+
+        -- Update the angle
+        self.theta += self.omega
+
+        -- Convert polar back to Cartesian
+        local swingX = self.grapple.x + self.ropeLength * math.sin(self.theta)
+        local swingY = self.grapple.y + self.ropeLength * math.cos(self.theta)
+
+        self.vx = swingX - self.x
+        self.vy = swingY - self.y
+
+        targetX = swingX
+        targetY = swingY
+    else
+        self.swinging = false
+    end
+
+    local actualX, actualY, collisions, count = self:moveWithCollisions(targetX, targetY)
+
+    if self.grapple.state == "out" then
+        self.arrow:moveTo(self.x, self.y-(self.height/2))
+    end
+
+    self:CrankCheck()
 end
 
 function Player:collisionResponse(other)
-    if other.super.className == "Platform" then
+    -- if other.super.className ~= "Platform" then return "slide" end
+
+    if other.type == "Platform" then
+        local _, sy, _, sh = self:getBounds()
+        local _, oy, _, oh = other:getBounds()
+
+        if sy + sh <= oy + 4 and self.vy >= 0 then -- small threshold to detect top-side landings whilst the player is moving downwards
+            self.jumped = false
+            -- self.grounded = true
+            self.vy = 0
+            self.vx = math.sign(self.vx) * math.max(0, math.abs(self.vx) - other.friction)
+        end
+
         return "slide"
+    end
+end
+
+function Player:CrankCheck()
+    if self.grapple.state == "stuck" then
+        if pd.isCrankDocked() then
+            CrankInd = 1
+        end
+    end
+
+    if CrankInd == 1 then
+        if self.grapple.state ~= "stuck" then
+            CrankInd = 0
+        end
+        if pd.isCrankDocked() == false then
+            CrankInd = 0
+        end
     end
 end
