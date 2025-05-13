@@ -24,6 +24,7 @@ function Player:init(x, y, speed, jumpspeed, gravity)
     -- Movement whilst jumping
     self.jump_speed = jumpspeed
     self.gravity = gravity
+    self.air_ax = 0.3
     self.max_vy_fall = 10
 
     -- Movement whilst grappling
@@ -56,10 +57,15 @@ function Player:update()
 
     self.vy += self.gravity
 
+    local acc = self.ax
+    if self.jumped == true then
+        acc = self.air_ax
+    end
+
     if playdate.buttonIsPressed(playdate.kButtonLeft) then
-        self.vx -= self.ax
+        self.vx -= acc
     elseif playdate.buttonIsPressed(playdate.kButtonRight) then
-        self.vx += self.ax
+        self.vx += acc
     end
     print(self.vx)
 
@@ -97,6 +103,13 @@ function Player:update()
         elseif (self.grapple.state == "launched" or self.grapple.state == "stuck") then
             self.grapple:remove()
             self.grapple.state = "none"
+        end
+    end
+
+    if self.grapple.state == "stuck" and not pd.isCrankDocked() then
+        local crankChange = pd.getCrankChange()
+        if crankChange ~= 0 then
+            self.ropeLength = math.max(10, self.ropeLength - crankChange)
         end
     end
 
