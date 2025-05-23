@@ -1,0 +1,28 @@
+{
+    "levels": [
+      {
+        "id": 1,
+        "name": "Start Zone",
+        "filename": "level1.json",
+        "thumbnail": "thumb1",
+        "unlocked": true,
+        "recommendedLevel": 1
+      },
+      {
+        "id": 2,
+        "name": "Cave Depths",
+        "filename": "level2.json",
+        "thumbnail": "thumb2",
+        "unlocked": false,
+        "recommendedLevel": 2
+      },
+      {
+        "id": 3,
+        "name": "Sky Summit",
+        "filename": "level3.json",
+        "thumbnail": "thumb3",
+        "unlocked": false,
+        "recommendedLevel": 3
+      }
+    ]
+  }
