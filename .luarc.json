@@ -5,7 +5,8 @@
         "Platform",
         "Grapple_Surface",
         "Grapple",
-        "Arrow"],
+        "Arrow",
+        "Floor"],
     "diagnostics.severity": {
         "duplicate-set-field": "Hint"
     },
