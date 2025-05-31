@@ -38,7 +38,6 @@ function LevelSelect:enter(previous, manager)
 end
 
 function LevelSelect:exit()
-    gfx.clear()
 end
 
 function LevelSelect:update()

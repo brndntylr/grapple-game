@@ -6,6 +6,7 @@ import "CoreLibs/ui"
 import "player"
 import "platform"
 import "grapple_surface"
+import "floor"
 
 local pd <const> = playdate
 local ds <const> = pd.datastore
@@ -25,6 +26,9 @@ local classMap = {
     grapple_Surface = function(data)
         Grapple_Surface(data.x, data.y, data.width, data.height, data.props)
     end,
+    floor = function(data)
+        Floor()
+    end
     -- Add more mappings here (e.g., enemies, pickups, etc.)
 }
 
@@ -47,6 +51,7 @@ end
 
 function Gameplay:enter(previous, manager, filename)
 	-- set up the level
+    gfx.clear()
     loadLevel(filename)
 end
 

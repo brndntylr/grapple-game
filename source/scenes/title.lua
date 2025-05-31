@@ -24,15 +24,11 @@ function Title:draw()
     -- Render the title screen
     gfx.clear()
 
-    -- local titleFont = gfx.font.new(gfx.getSystemFont(playdate.graphics.font.kVariantBold)) -- Replace with a custom large font if desired
-    -- local instructionFont = gfx.getSystemFont()
-
     -- Draw title text
     local titleText = "Grapple Game"
     local titleWidth, titleHeight = gfx.getTextSize(titleText)
     local titleX = (400 - titleWidth) / 2
     local titleY = 240 / 3 - titleHeight / 2
-    -- gfx.setFont(titleFont)
     gfx.drawText(titleText, titleX, titleY)
 
     -- Draw start prompt
@@ -40,7 +36,6 @@ function Title:draw()
     local promptWidth, promptHeight = gfx.getTextSize(promptText)
     local promptX = (400 - promptWidth) / 2
     local promptY = titleY + titleHeight + 40
-    -- gfx.setFont(instructionFont)
     gfx.drawText(promptText, promptX, promptY)
 end
 
