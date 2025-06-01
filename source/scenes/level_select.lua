@@ -29,12 +29,11 @@ function LevelSelect:enter(previous, manager)
     self.itemHeight = 20
 
     local levelData = ds.read("levels/level_overview")
-    self.levels = levelData.levels
-    if not self.levels then
+    if not levelData or not levelData.levels then
         print("❌ Failed to load level data")
         return
     end
-
+    self.levels = levelData.levels
 end
 
 function LevelSelect:exit()
@@ -56,8 +55,8 @@ function LevelSelect:update()
             end
         end
     elseif pd.buttonJustPressed(pd.kButtonA) then
-        local selectedLevel = self.levels[self.selected]
-        self.manager:enter(Gameplay(), self.manager, selectedLevel.filename)
+        -- local selectedLevel = self.levels[self.selected]
+        self.manager:enter(Gameplay(), self.manager, self.levels, self.selected)
     elseif pd.buttonJustPressed(pd.kButtonB) then
         self.manager:enter(Title(), self.manager)
     end

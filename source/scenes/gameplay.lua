@@ -3,10 +3,13 @@ import "CoreLibs/graphics"
 import "CoreLibs/sprites"
 import "CoreLibs/timer"
 import "CoreLibs/ui"
+import "roomy-playdate"
+import "scenes/level_end"
 import "player"
 import "platform"
 import "grapple_surface"
 import "floor"
+import "end_flag"
 
 local pd <const> = playdate
 local ds <const> = pd.datastore
@@ -16,23 +19,27 @@ CrankInd = 0
 
 class("Gameplay").extends(Room)
 
-local classMap = {
-    player = function(data)
-        Player(data.x, data.y)
-    end,
-    platform = function(data)
-        Platform(data.x, data.y, data.width, data.height, data.props)
-    end,
-    grapple_Surface = function(data)
-        Grapple_Surface(data.x, data.y, data.width, data.height, data.props)
-    end,
-    floor = function(data)
-        Floor()
-    end
-    -- Add more mappings here (e.g., enemies, pickups, etc.)
-}
+local function getClassMap(gameplay)
+    return {
+        player = function(data)
+            Player(data.x, data.y, function() gameplay:endLevel() end)
+        end,
+        platform = function(data)
+            Platform(data.x, data.y, data.width, data.height, data.props)
+        end,
+        grapple_Surface = function(data)
+            Grapple_Surface(data.x, data.y, data.width, data.height, data.props)
+        end,
+        floor = function(data)
+            Floor()
+        end,
+        end_flag = function(data)
+            EndFlag(data.x, data.y)
+        end
+    }
+end
 
-local function loadLevel(filename)
+local function loadLevel(classMap, filename)
     local levelData = ds.read("levels/" .. filename)
     if not levelData then
         print("❌ Failed to load level:", filename)
@@ -49,10 +56,14 @@ local function loadLevel(filename)
     end
 end
 
-function Gameplay:enter(previous, manager, filename)
+function Gameplay:enter(previous, manager, levels, selected)
 	-- set up the level
     gfx.clear()
-    loadLevel(filename)
+    local classMap = getClassMap(self)
+    self.manager = manager
+    self.levels = levels
+    self.selected = selected
+    loadLevel(classMap, levels[selected].filename)
 end
 
 function Gameplay:update()
@@ -65,8 +76,13 @@ end
 
 function Gameplay:leave(next, ...)
 	-- destroy entities and cleanup resources
+    gfx.sprite.removeAll()
 end
 
 function Gameplay:draw()
 	-- draw the level
+end
+
+function Gameplay:endLevel()
+    self.manager:enter(LevelEnd(), self.manager, self.levels, self.selected)
 end

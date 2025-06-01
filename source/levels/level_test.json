@@ -1,0 +1,21 @@
+{
+    "id": 0,
+    "name": "Start Zone",
+    "background": "bg_start",
+    "music": "music_intro",
+    "components": [
+      {
+        "type": "player",
+        "x": 100,
+        "y": 120
+      },
+      {
+        "type": "floor"
+      },
+      {
+        "type": "end_flag",
+        "x": 200,
+        "y": 120
+      }
+    ]
+  }

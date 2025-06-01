@@ -1,6 +1,14 @@
 {
     "levels": [
       {
+        "id": 0,
+        "name": "Testing",
+        "filename": "level_test",
+        "thumbnail": "thumb1",
+        "unlocked": true,
+        "recommendedLevel": 0
+      },
+      {
         "id": 1,
         "name": "Start Zone",
         "filename": "level_001",
