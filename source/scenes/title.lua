@@ -14,6 +14,7 @@ function Title:enter(previous, manager)
 end
 
 function Title:update()
+    gfx.sprite.update()
     -- Handle input and update logic
     if pd.buttonJustPressed(pd.kButtonA) then
         self.manager:enter(LevelSelect(), self.manager)   

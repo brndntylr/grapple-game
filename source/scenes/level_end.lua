@@ -31,6 +31,7 @@ function LevelEnd:enter(previous, manager, levels, selected)
 end
 
 function LevelEnd:update()
+    gfx.sprite.update()
     if pd.buttonJustPressed(pd.kButtonUp) then
         self.selectedIndex = (self.selectedIndex - 2) % #self.options + 1
     elseif pd.buttonJustPressed(pd.kButtonDown) then

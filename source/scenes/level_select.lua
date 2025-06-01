@@ -40,6 +40,7 @@ function LevelSelect:exit()
 end
 
 function LevelSelect:update()
+    gfx.sprite.update()
     if pd.buttonJustPressed(pd.kButtonUp) then
         if self.selected > 1 then
             self.selected -= 1
