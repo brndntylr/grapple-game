@@ -5,7 +5,17 @@
         "Platform",
         "Grapple_Surface",
         "Grapple",
-        "Arrow"],
+        "Arrow",
+        "Floor",
+        "Gameplay",
+        "LevelEnd",
+        "LevelSelect",
+        "Title",
+        "EndFlag",
+        "Room",
+        "PauseRoom",
+        "Manager"
+    ],
     "diagnostics.severity": {
         "duplicate-set-field": "Hint"
     },

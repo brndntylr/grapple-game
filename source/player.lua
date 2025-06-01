@@ -9,7 +9,7 @@ local gfx <const> = pd.graphics
 
 class('Player').extends(gfx.sprite)
 
-function Player:init(x, y, speed, jumpspeed, gravity)
+function Player:init(x, y, onLevelEnd)
 	Player.super.init(self)
 
     -- Movement on the ground
@@ -45,13 +45,16 @@ function Player:init(x, y, speed, jumpspeed, gravity)
 	local player_image = gfx.image.new("images/dude-0001.png")
     self:setImage(player_image)
 	self:setCollideRect(0, 0, self:getSize())
-    self:setCollidesWithGroups({1})
+    self:setCollidesWithGroups({1,3})
 	self:setZIndex(10)
     self:moveTo(x, y)
 
     -- Initialising grapple and arrow within the player sprite
     self.grapple = Grapple(self.x+self.width, self.y+(self.height/2))
     self.arrow = Arrow(self.x, self.y)
+
+    -- Call back function that moves to level end scene on collision with EndFlag
+    self.onLevelEnd = onLevelEnd
 
     self:add()
 end
@@ -201,6 +204,11 @@ function Player:collisionResponse(other)
         end
 
         return "slide"
+    end
+
+    if other.type == "EndFlag" then
+        self.onLevelEnd()
+        return "overlap"
     end
 end
 

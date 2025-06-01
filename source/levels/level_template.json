@@ -1,0 +1,29 @@
+{
+    "id": 1,
+    "name": "Start Zone",
+    "background": "bg_start",
+    "music": "music_intro",
+    "components": [
+      {
+        "type": "player",
+        "x": 100,
+        "y": 120
+      },
+      {
+        "type": "platform",
+        "x": 80,
+        "y": 150,
+        "width": 60,
+        "height": 10
+      },
+      {
+        "type": "item",
+        "subtype": "coin",
+        "x": 150,
+        "y": 100,
+        "props": {
+          "value": 1
+        }
+      }
+    ]
+  }
