@@ -2,22 +2,31 @@
 import "CoreLibs/object"
 import "CoreLibs/graphics"
 import "roomy-playdate"
+import "scenes/level_select"
+import "scenes/title"
+import "scenes/gameplay"
 
 local pd <const> = playdate
 local gfx <const> = pd.graphics
 
 class("LevelEnd").extends(PauseRoom)
 
-function LevelEnd:enter(previous, manager)
+function LevelEnd:enter(previous, manager, levels, selected)
     -- Initialize your level selection screen
     self.manager = manager
     self.selectedIndex = 1
     self.options = {
-        { label = "Next Level", action = function() self.manager:enter(Gameplay(), self.manager) end },
-        { label = "Replay Level", action = function() self.manager:enter(Gameplay(), self.manager) end },
+        { label = "Next Level", action = function()
+            if selected < #levels then
+                selected += 1
+                self.manager:enter(Gameplay(), self.manager, levels, selected)
+            else
+                self.manager:enter(LevelSelect(), self.manager)
+            end
+        end },
+        { label = "Restart Level", action = function() self.manager:enter(Gameplay(), self.manager, levels, selected) end },
         { label = "Level Select", action = function() self.manager:enter(LevelSelect(), self.manager) end },
         { label = "Quit to Title", action = function() self.manager:enter(Title(), self.manager) end }
-
     }
 end
 
