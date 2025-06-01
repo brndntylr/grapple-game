@@ -180,6 +180,20 @@ function Player:update()
         self.swinging = false
     end
 
+    -- Clamp to screen bounds (left, right, top)
+    local spriteWidth, spriteHeight = self:getSize()
+    targetX = math.clamp(targetX, spriteWidth // 2, 400 - spriteWidth // 2)
+    targetY = math.max(targetY, spriteHeight // 2)
+
+    -- Check if player has fallen out of the bottom of the screen
+    if targetY > 240 + spriteHeight then
+        -- Restart the level
+        if self.onLevelEnd then
+            self.onLevelEnd("restart")
+        end
+        return
+    end
+
     local actualX, actualY, collisions, count = self:moveWithCollisions(targetX, targetY)
 
     if self.grapple.state == "out" then
