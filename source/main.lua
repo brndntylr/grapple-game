@@ -4,6 +4,7 @@ import "CoreLibs/timer"
 import "CoreLibs/ui"
 import "roomy-playdate"
 import "scenes/level_select"
+import "scenes/level_editor"
 import "scenes/manager"
 
 local pd <const> = playdate
