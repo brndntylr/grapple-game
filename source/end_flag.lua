@@ -11,6 +11,10 @@ function EndFlag:init(x, y)
 
     self.type = "EndFlag"
     local marker_image = gfx.image.new("images/flag-0001.png") -- Replace with your desired image
+    if not marker_image then
+        print("❌ Failed to load end flag image")
+        return
+    end
     self:setImage(marker_image)
     self:setCenter(0.5, 1.0)
     self:setCollideRect(0, 0, marker_image:getSize())

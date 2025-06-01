@@ -12,6 +12,10 @@ function Platform:init(x, y, width, height)
     self.friction = 0.5
 
     local platform_image = gfx.image.new("images/platform-0001.png")
+    if not platform_image then
+        print("❌ Failed to load platform image")
+        return
+    end
     local platform_width, platform_height = platform_image:getSize()
     self:setImage(platform_image)
     self:setScale(width/platform_width, height/platform_height)
