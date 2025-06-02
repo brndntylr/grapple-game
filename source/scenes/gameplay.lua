@@ -27,7 +27,7 @@ local function getClassMap(gameplay)
         platform = function(data)
             Platform(data.x, data.y, data.width, data.height, data.props)
         end,
-        grapple_Surface = function(data)
+        grapple_surface = function(data)
             Grapple_Surface(data.x, data.y, data.width, data.height, data.props)
         end,
         floor = function(data)
