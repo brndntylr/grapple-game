@@ -23,9 +23,12 @@ function Player:init(x, y, onLevelEnd)
 
     -- Movement whilst jumping
     self.jump_speed = 15
-    self.gravity = 1.5
+    self.min_jump_speed = 8  -- Reduced for smaller tap jump
+    self.max_jump_speed = 16 -- Increased for higher held jump
+    self.gravity = 1.8
     self.air_ax = 0.3
     self.max_vy_fall = 10
+    self.is_jumping = false  -- Track if we're in a jump
 
     -- Movement whilst grappling
     self.grappleLength = 0
@@ -97,9 +100,19 @@ function Player:update()
                 self.vy += math.sin(self.theta) * self.omega * self.ropeLength
                 self.grapple.state = "none"
             end
-            self.vy -= self.jump_speed
+            self.vy = -self.min_jump_speed  -- Initial jump velocity
             self.jumped = true
+            self.is_jumping = true
         end
+    elseif pd.buttonIsPressed(pd.kButtonA) and self.is_jumping then
+        -- Continue rising if button held and within max jump height
+        if self.vy > -self.max_jump_speed then
+            self.vy -= 0.8  -- Increased from 0.5 for faster height gain
+        end
+    end
+
+    if pd.buttonJustReleased(pd.kButtonA) then
+        self.is_jumping = false
     end
 
     if pd.buttonJustPressed(pd.kButtonB) then
