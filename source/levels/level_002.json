@@ -6,29 +6,37 @@
     "components": [
       {
         "type": "player",
-        "x": 100,
-        "y": 120
+        "x": 40,
+        "y": 240
       },
       {
         "type": "platform",
-        "x": 60,
-        "y": 10,
-        "width": 60,
-        "height": 10
+        "x": 100,
+        "y": 210,
+        "width": 80,
+        "height": 12
       },
       {
         "type": "platform",
-        "x": 10,
-        "y": 225,
-        "width": 60,
-        "height": 10
+        "x": 190,
+        "y": 190,
+        "width": 80,
+        "height": 16
       },
       {
-        "type": "grapple_surface",
-        "x": 100,
-        "y": 100,
-        "width": 60,
-        "height": 10
+        "type": "floor",
+        "x1": 0,
+        "x2": 60
+      },
+      {
+        "type": "floor",
+        "x1": 340,
+        "x2": 400
+      },
+      {
+        "type": "end_flag",
+        "x": 370,
+        "y": 240
       }
     ]
   }

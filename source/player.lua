@@ -24,8 +24,8 @@ function Player:init(x, y, onLevelEnd)
     -- Movement whilst jumping
     self.jump_speed = 15
     self.min_jump_speed = 8  -- Reduced for smaller tap jump
-    self.max_jump_speed = 16 -- Increased for higher held jump
-    self.gravity = 1.8
+    self.max_jump_speed = 18 -- Increased for higher held jump
+    self.gravity = 1.6
     self.air_ax = 0.3
     self.max_vy_fall = 10
     self.is_jumping = false  -- Track if we're in a jump
@@ -50,7 +50,7 @@ function Player:init(x, y, onLevelEnd)
 	self:setCollideRect(0, 0, self:getSize())
     self:setCollidesWithGroups({1,3})
 	self:setZIndex(10)
-    self:moveTo(x, y)
+    self:moveTo(x, y-self.height/2)
 
     -- Initialising grapple and arrow within the player sprite
     self.grapple = Grapple(self.x+self.width, self.y+(self.height/2))

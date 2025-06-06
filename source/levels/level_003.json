@@ -1,34 +1,35 @@
 {
-    "id": 1,
+    "id": 3,
     "name": "Start Zone",
     "background": "bg_start",
     "music": "music_intro",
     "components": [
       {
         "type": "player",
-        "x": 200,
-        "y": 120
-      },
-      {
-        "type": "platform",
-        "x": 80,
-        "y": 150,
-        "width": 100,
-        "height": 10
-      },
-      {
-        "type": "platform",
-        "x": 200,
-        "y": 25,
-        "width": 60,
-        "height": 40
+        "x": 40,
+        "y": 240
       },
       {
         "type": "grapple_surface",
-        "x": 100,
+        "x": 200,
         "y": 10,
-        "width": 60,
+        "width": 80,
         "height": 10
+      },
+      {
+        "type": "floor",
+        "x1": 0,
+        "x2": 80
+      },
+      {
+        "type": "floor",
+        "x1": 320,
+        "x2": 400
+      },
+      {
+        "type": "end_flag",
+        "x": 370,
+        "y": 240
       }
     ]
   }

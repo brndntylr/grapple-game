@@ -36,7 +36,7 @@ function Platform:init(x, y, width, height)
     self:setCollideRect(0, 0, width, height)
     self:setGroups({1})
     self:setZIndex(10)
-    self:moveTo(x-self.width/2, y-self.height/2)
+    self:moveTo(x, y-self.height/2)
 
     self:add()
 end

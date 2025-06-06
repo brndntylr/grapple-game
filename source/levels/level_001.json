@@ -6,29 +6,22 @@
     "components": [
       {
         "type": "player",
-        "x": 100,
-        "y": 120
+        "x": 40,
+        "y": 240
       },
       {
         "type": "platform",
-        "x": 80,
+        "x": 120,
         "y": 240,
         "width": 60,
         "height": 30
       },
       {
         "type": "platform",
-        "x": 140,
+        "x": 190,
         "y": 240,
-        "width": 60,
+        "width": 80,
         "height": 60
-      },
-      {
-        "type": "grapple_surface",
-        "x": 100,
-        "y": 0,
-        "width": 60,
-        "height": 40
       },
       {
         "type": "end_flag",
