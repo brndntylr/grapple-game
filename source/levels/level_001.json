@@ -12,19 +12,33 @@
       {
         "type": "platform",
         "x": 80,
-        "y": 150,
+        "y": 240,
         "width": 60,
         "height": 30
       },
       {
+        "type": "platform",
+        "x": 140,
+        "y": 240,
+        "width": 60,
+        "height": 60
+      },
+      {
         "type": "grapple_surface",
         "x": 100,
-        "y": 10,
+        "y": 0,
         "width": 60,
         "height": 40
       },
       {
-        "type": "floor"
+        "type": "end_flag",
+        "x": 360,
+        "y": 240
+      },
+      {
+        "type": "floor",
+        "x1": 0,
+        "x2": 400
       }
     ]
   }

@@ -16,7 +16,7 @@ function Player:init(x, y, onLevelEnd)
     self.vx = 0
     self.vy = 0
 
-    self.ax = 0.8
+    self.ax = 1.5
     -- self.friction = 0.4
     self.jumped = false
     self.max_vx = 5
@@ -201,6 +201,9 @@ function Player:update()
     end
 
     self:CrankCheck()
+
+    -- Make sure to call draw after position updates
+    -- self:draw()
 end
 
 function Player:collisionResponse(other)
@@ -240,5 +243,23 @@ function Player:CrankCheck()
         if pd.isCrankDocked() == false then
             CrankInd = 0
         end
+    end
+end
+
+function Player:draw()
+    -- First draw the sprite normally
+    Player.super.draw(self)
+    
+    -- Then draw the rope when grapple is stuck
+    if self.grapple and self.grapple.state == "stuck" then
+        -- Calculate player hand position
+        local handX = self.x + self.width/2
+        local handY = self.y + self.height/3
+        
+        -- Set line style if desired
+        -- gfx.setLineWidth(2)  -- Optional: make rope thicker
+        
+        -- Draw the rope line
+        gfx.drawLine(handX, handY, self.grapple.x, self.grapple.y)
     end
 end

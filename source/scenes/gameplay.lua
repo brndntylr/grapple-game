@@ -31,7 +31,7 @@ local function getClassMap(gameplay)
             Grapple_Surface(data.x, data.y, data.width, data.height, data.props)
         end,
         floor = function(data)
-            Floor()
+            Floor(data.x1, data.x2)
         end,
         end_flag = function(data)
             EndFlag(data.x, data.y)

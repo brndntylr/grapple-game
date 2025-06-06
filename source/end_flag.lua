@@ -20,6 +20,6 @@ function EndFlag:init(x, y)
     self:setCollideRect(0, 0, marker_image:getSize())
     self:setGroups({3}) -- Marker group
     self:setZIndex(20)
-    self:moveTo(x, y)
+    self:moveTo(x-self.width/2, y-2)
     self:add()
 end
